@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware # To allow browser requests
 
-from langchain_groq import ChatGroq
+#from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -16,12 +17,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 # Load Environment and Initialize Services
 # ------------------------
 load_dotenv()
-api_key = os.getenv("GROQ_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
-    raise ValueError("GROQ_API_KEY not found in .env file.")
+    raise ValueError("OPENAI_API_KEY not found in .env file.")
 
 # Initialize LLM
-llm = ChatGroq(groq_api_key=api_key, model_name="openai/gpt-oss-120b")
+llm = ChatOpenAI(api_key=api_key, model_name="gpt-4o-mini")
 
 # Initialize embeddings
 embeddings = HuggingFaceEmbeddings(
@@ -55,8 +56,8 @@ Question:
 Answer:
 """
 prompt = PromptTemplate(
-    input_variables=["context", "question"],
-    template=prompt_template_string
+    input_variables= ["context", "question"],
+    template= prompt_template_string
 )
 
 # Build RAG Chain
